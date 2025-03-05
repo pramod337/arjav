@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration with OTP Verification</title>
+    <script>
+        // Function to send the OTP email
+        function sendEmail() {
+            var email = document.getElementById("email").value;
+
+            // Send the email via API
+            fetch(`/send-email?toEmail=${email}`, {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Show success or failure message
+                document.getElementById("otp-section").style.display = "block"; // Show OTP input
+            })
+            .catch(error => {
+                alert("Error sending OTP.");
+                console.error(error);
+            });
+        }
+
+        // Function to verify OTP
+        function verifyOtp() {
+            var email = document.getElementById("email").value;
+            var otp = document.getElementById("otp").value;
+
+            fetch(`/verify-otp?email=${email}&otp=${otp}`, {
+                method: "POST"
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); 
+                if (data === "OTP verified successfully.") {
+                    document.getElementById("registration-section").style.display = "block"; // Show registration fields
+                    document.getElementById("otp-section").style.display = "none"; // Hide OTP section
+                }
+            })
+            .catch(error => {
+                alert("Error verifying OTP.");
+                console.error(error);
+            });
+        }
+
+        // Function to register user
+        // Function to register user
+function registerUser() {
+    var email = document.getElementById("email").value;  // Get the email
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirm-password").value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    // Send user registration data to backend
+    fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            email: email,  // Include email here
+            username: username,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.message === "User registered successfully!") {
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    })
+    .catch(error => {
+        alert("Error registering user.");
+        console.error(error);
+    });
+}
+
+    </script>
+</head>
+<body>
+
+    <h2>User Registration with OTP Verification</h2>
+
+    <!-- Email Input Section -->
+    <div id="email-section">
+        <label for="email">Enter your email: </label>
+        <input type="email" id="email" required>
+        <button onclick="sendEmail()">Send OTP</button>
+    </div>
+
+    <!-- OTP Input Section (Hidden Initially) -->
+    <div id="otp-section" style="display: none;">
+        <label for="otp">Enter OTP: </label>
+        <input type="text" id="otp" required>
+        <button onclick="verifyOtp()">Verify OTP</button>
+    </div>
+
+    <!-- Registration Section (Hidden Initially) -->
+    <div id="registration-section" style="display: none;">
+        <label for="username">Username: </label>
+        <input type="text" id="username" required><br>
+
+        <label for="password">Password: </label>
+        <input type="password" id="password" required><br>
+
+        <label for="confirm-password">Confirm Password: </label>
+        <input type="password" id="confirm-password" required><br>
+
+        <button onclick="registerUser()">Register</button>
+    </div>
+<br><br>
+<a href="/login.html">Go back to Login page!!!!</a>
+</body>
+</html>

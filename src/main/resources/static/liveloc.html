@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Live Location</title>
+    
+    <script>
+        function getLiveLocation() {
+            let city2 = document.getElementById("city2").value;
+            
+            if (!city2) {
+                alert("Please enter Destination 2!");
+                return;
+            }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        let latitude = position.coords.latitude;
+                        let longitude = position.coords.longitude;
+
+                        document.getElementById("result").innerHTML =
+                            "Latitude: " + latitude + "<br>Longitude: " + longitude;
+
+                        // ✅ Send the live location and city2 to the backend
+                        fetch(`/liveloc?lat=${latitude}&lon=${longitude}&city2=${city2}`)
+                            .then(response => response.text())
+                            .then(data => document.getElementById("distance").innerHTML = data)
+                            .catch(error => console.error("Error:", error));
+                    },
+                    function(error) {
+                        document.getElementById("result").innerHTML =
+                            "Error getting location: " + error.message;
+                    }
+                );
+            } else {
+                document.getElementById("result").innerHTML =
+                    "Geolocation is not supported by this browser.";
+            }
+        }
+        
+    </script>
+   <script>
+   
+   function getDirections() {
+	    let city2 = document.getElementById("city2").value;
+
+	    fetch(`/liveloc?lat=${latitude}&lon=${longitude}&city2=${city2}`)
+	        .then(response => response.text())
+	        .then(data => {
+	            document.getElementById("directions").innerHTML = data;
+	        })
+	        .catch(error => console.error("Error:", error));
+	}
+   
+   </script>
+    
+</head>
+<body>
+
+    <h1>Live Location</h1>
+    
+    
+    <label for="city2">Enter Destination City:</label>
+    <input type="text" id="city2" placeholder="Enter Destination"><br><br>
+
+    <button onclick="getLiveLocation()">Calculate Distance from your Location</button>
+
+    <h2 id="result"></h2>
+    <h2 id="distance"></h2> <!-- ✅ Distance result -->
+
+</body>
+</html>

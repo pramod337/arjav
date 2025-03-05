@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <h2>Oops! Something went wrong.</h2>
+    <p>We apologize for the inconvenience. Please try again later.</p>
+    <p>Error details:</p>
+    <ul>
+        <li>Status: <span th:text="${status}">Unknown</span></li>
+        <li>Message: <span th:text="${error}">Unknown</span></li>
+    </ul>
+    <a th:href="@{/home}">Go to Home</a>
+</body>
+</html>

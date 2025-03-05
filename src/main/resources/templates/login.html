@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <script>
+        async function login(event) {
+            event.preventDefault(); // Prevent form from reloading the page
+            
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            let response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url; // Redirect if login is successful
+            } else {
+                document.getElementById("error").innerText = "Invalid username or password.";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Login Page</h2>
+
+    <p id="error" style="color: red;"></p>
+
+    <form onsubmit="login(event)">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter Username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter Password" required />
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="/sendmail.html">Register here</a></p>
+</body>
+</html>
