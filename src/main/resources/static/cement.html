@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cement Products - Buildmaadi.com</title>
+    <style>
+        body, h2, h3, p, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f8f8;
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            padding-left: 20px;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .cart-container {
+            margin-right: 20px;
+        }
+
+        .cart-button {
+            background-color: #ff9800;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .contact {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 15px;
+            text-align: center;
+            width: 220px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .quantity-container button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .quantity-container input {
+            width: 40px;
+            text-align: center;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Cement</a></li>
+            <li><a href="#">TMT Steel Bars</a></li>
+            <li><a href="#">Blocks</a></li>
+            <li><a href="#">Red Bricks</a></li>
+            <li><a href="#">M Sand</a></li>
+            <li><a href="#">Blog</a></li>
+        </ul>
+        <div class="cart-container">
+            <button class="cart-button" onclick="viewCart()">View Cart (<span id="cart-count">0</span>)</button>
+            <button class="clear-cart" onclick="clearCart()">Clear Cart</button>
+        </div>
+    </nav>
+
+    <section class="contact">
+        <h2>Call for Best Price:</h2>
+        <p>9972761900</p>
+    </section>
+
+    <section class="product-grid">
+        <div class="product" data-name="ACC Cement" data-price="400">
+            <img src="/images/acc-cement.png" alt="ACC Cement">
+            <h3>ACC Cement</h3>
+            <p>OPC 53 Grade</p>
+            <p>Rs.400/ Bag</p>
+            <div class="quantity-container">
+                <button onclick="changeQuantity(this, -1)">-</button>
+                <input type="number" value="1" min="0">
+                <button onclick="changeQuantity(this, 1)">+</button>
+            </div>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        <div class="product" data-name="UltraTech Cement" data-price="395">
+            <img src="/images/ultratech-cement.png" alt="UltraTech Cement">
+            <h3>UltraTech Cement</h3>
+            <p>PPC Grade</p>
+            <p>Rs.395/ Bag</p>
+            <div class="quantity-container">
+                <button onclick="changeQuantity(this, -1)">-</button>
+                <input type="number" value="1" min="0">
+                <button onclick="changeQuantity(this, 1)">+</button>
+            </div>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        
+        <div class="product" data-name="Zuari-Cement" data-price="400">
+            <img src="/images/zuari-cement.png" alt="ACC Cement">
+            <h3>Zuari-Cement</h3>
+            <p>OPC 53 Grade</p>
+            <p>Rs.450/ Bag</p>
+            <div class="quantity-container">
+                <button onclick="changeQuantity(this, -1)">-</button>
+                <input type="number" value="1" min="0">
+                <button onclick="changeQuantity(this, 1)">+</button>
+            </div>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        
+        <div class="product" data-name="Bharathi-Cement" data-price="400">
+            <img src="/images/bharathi-cement.png" alt="ACC Cement">
+            <h3>Bharathi Cement</h3>
+            <p>OPC 53 Grade</p>
+            <p>Rs.500/ Bag</p>
+            <div class="quantity-container">
+                <button onclick="changeQuantity(this, -1)">-</button>
+                <input type="number" value="1" min="0">
+                <button onclick="changeQuantity(this, 1)">+</button>
+            </div>
+            <button onclick="addToCart(this)">Add to Cart</button>
+        </div>
+        
+        
+    </section>
+
+<script>
+    function changeQuantity(button, change) {
+        let input = button.parentElement.querySelector("input");
+        let value = parseInt(input.value) + change;
+        if (value > 0) input.value = value;
+    }
+
+    function addToCart(button) {
+        let product = button.parentElement;
+        let name = product.getAttribute("data-name");
+        let price = product.getAttribute("data-price");
+        let quantity = parseInt(product.querySelector("input").value);
+        
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let item = cart.find(item => item.name === name);
+        
+        if (item) {
+            item.quantity += quantity;
+        } else {
+            cart.push({ name, price, quantity });
+        }
+        
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+    }
+
+    function clearCart() {
+        localStorage.removeItem("cart");
+        updateCartCount();
+    }
+
+    function updateCartCount() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById("cart-count").innerText = count;
+    }
+
+    updateCartCount();
+
+    function viewCart() {
+        window.location.href = "cart.html";
+    }
+
+    updateCartCount();
+</script>
+
+</body>
+</html>

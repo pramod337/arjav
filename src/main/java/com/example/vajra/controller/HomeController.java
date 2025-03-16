@@ -1,37 +1,26 @@
 package com.example.vajra.controller;
 
-import com.example.vajra.model.User;
-import com.example.vajra.service.UserService;
-
+import com.example.vajra.model.Product;
+import com.example.vajra.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.vajra.model.User;
+import java.util.List;
 
 @Controller
-@RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/")
 public class HomeController {
 
-	@Autowired
-    private UserService userService;
+    @Autowired
+    private ProductRepository productRepository;
 
-	
-	@GetMapping("/home")
-			public String home() {
-		return "home";
-		
-	}
-	
-	//@PostMapping("/register")
-	//public ResponseEntity<String> registerUser(@RequestBody User user) {
-      //  userService.registerUser(user.getUsername(), user.getPassword(), user.getEmail());
-        //return ResponseEntity.ok("User registered successfully!");
-    //}
+    @GetMapping
+    public String showHomePage(Model model) {
+        List<Product> products = productRepository.findAll();
+        model.addAttribute("products", products);
+        return "home";  // This should match the Thymeleaf template name: home.html
+    }
 }

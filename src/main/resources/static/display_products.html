@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .product h3 {
+            margin: 0;
+        }
+        .product p {
+            margin: 5px 0;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vendor Products</h1>
+    <label for="vendorId">Enter Vendor ID:</label>
+    <input type="text" id="vendorId" placeholder="e.g., 44">
+    <button onclick="fetchSpecificVendorProducts()">Fetch Specific Vendor Products</button>
+
+    <div class="section">
+        <h2>Specific Vendor Products</h2>
+        <div id="specificVendorProductList"></div>
+    </div>
+
+    <div class="section">
+        <h2>All Vendors' Products</h2>
+        <button onclick="fetchAllVendorsProducts()">Fetch All Vendors' Products</button>
+        <div id="allVendorsProductList"></div>
+    </div>
+
+    <script>
+        // Fetch products for a specific vendor
+        async function fetchSpecificVendorProducts() {
+            const vendorId = document.getElementById('vendorId').value;
+            if (!vendorId) {
+                alert('Please enter a Vendor ID');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:8080/api/products/vendor/${vendorId}`);
+            const products = await response.json();
+
+            const productList = document.getElementById('specificVendorProductList');
+            productList.innerHTML = ''; // Clear previous results
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>No products found for this vendor.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Price: $${product.price}</p>
+                    <p>Description: ${product.description}</p>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        async function fetchAllVendorsProducts() {
+            const response = await fetch(`http://localhost:8080/api/products`);
+            const products = await response.json();
+
+            const productList = document.getElementById('allVendorsProductList');
+            productList.innerHTML = ''; // Clear previous results
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>No products found.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Vendor ID: ${product.vendor_id || 'N/A'}</p>
+                    <p>Price: $${product.price}</p>
+                    <p>Description: ${product.description}</p>
+                `;
+                productList.appendChild(productDiv);
+            });
+        
+        }
+    </script>
+</body>
+</html>

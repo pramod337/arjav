@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Order Details</h2>
+
+
+        <label for="house">House Number:</label>
+        <input type="text" id="house" required>
+
+        <label for="address">Full Address:</label>
+        <textarea id="address" rows="3" required></textarea>
+
+ 		<label for="taluk">Taluk:</label>
+        <input type="text" id="taluk" required>
+
+        <label for="district">District:</label>
+        <select id="district">
+            
+            
+            <option value="Bagalkot">Bagalkot</option>
+  <option value="Ballari">Ballari</option>
+  <option value="Belagavi">Belagavi</option>
+  <option value="Bengaluru Rural">Bengaluru Rural</option>
+  <option value="Bengaluru Urban">Bengaluru Urban</option>
+  <option value="Bidar">Bidar</option>
+  <option value="Chamarajanagar">Chamarajanagar</option>
+  <option value="Chikballapur">Chikballapur</option>
+  <option value="Chikkamagaluru">Chikkamagaluru</option>
+  <option value="Chitradurga">Chitradurga</option>
+  <option value="Dakshina Kannada">Dakshina Kannada</option>
+  <option value="Davanagere">Davanagere</option>
+  <option value="Dharwad">Dharwad</option>
+  <option value="Gadag">Gadag</option>
+  <option value="Hassan">Hassan</option>
+  <option value="Haveri">Haveri</option>
+  <option value="Kalaburagi">Kalaburagi</option>
+  <option value="Kodagu">Kodagu</option>
+  <option value="Kolar">Kolar</option>
+  <option value="Koppal">Koppal</option>
+  <option value="Mandya">Mandya</option>
+  <option value="Mysuru">Mysuru</option>
+  <option value="Raichur">Raichur</option>
+  <option value="Ramanagara">Ramanagara</option>
+  <option value="Shivamogga">Shivamogga</option>
+  <option value="Tumakuru">Tumakuru</option>
+  <option value="Udupi">Udupi</option>
+  <option value="Uttara Kannada">Uttara Kannada</option>
+  <option value="Vijayapura">Vijayapura</option>
+  <option value="Yadgir">Yadgir</option>
+            
+            
+            
+        </select>
+
+       
+
+        <button onclick="submitOrder()">Submit Order</button>
+    </div>
+
+    <script>
+        function submitOrder() {
+            let quantity = document.getElementById("quantity").value;
+            let house = document.getElementById("house").value;
+            let address = document.getElementById("address").value;
+            let district = document.getElementById("district").value;
+            let taluk = document.getElementById("taluk").value;
+
+            if (quantity && house && address && district && taluk) {
+                alert("Order placed successfully!");
+                window.location.href = "confirmation.html"; // Redirect to confirmation page
+            } else {
+                alert("Please fill all fields.");
+            }
+        }
+    </script>
+
+</body>
+</html>

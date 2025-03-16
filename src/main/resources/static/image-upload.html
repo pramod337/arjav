@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .upload-form {
+            margin-bottom: 20px;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .image-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Upload</h1>
+
+    <!-- Image Upload Form -->
+    <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
+        <label for="imageUpload">Upload Image:</label>
+        <input type="file" id="imageUpload" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Display Uploaded Images -->
+    <div class="image-container" id="imageContainer">
+        <!-- Images will be dynamically added here -->
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const formData = new FormData(this); // Create FormData object
+    const imageContainer = document.getElementById('imageContainer');
+
+    console.log("File selected:", formData.get('image').name); // Log the file name
+
+    // Send the image to the server
+    fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("File uploaded successfully. Image URL:", data.imageUrl);
+            // Display the uploaded image
+            const imgElement = document.createElement('img');
+            imgElement.src = data.imageUrl;
+            imageContainer.appendChild(imgElement);
+        } else {
+            console.error("Failed to upload image.");
+            alert('Failed to upload image.');
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading image:', error);
+        alert('An error occurred while uploading the image.');
+    });
+});
+    </script>
+</body>
+</html>

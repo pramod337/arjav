@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Products</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 15px 50px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .product {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 250px;
+            text-align: center;
+        }
+        .product h3 {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/images/Yuga.ico" alt="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home.html">Home</a></li>
+                <li><a href="/cement.html">Cement</a></li>
+                <li><a href="#">TMT Steel Bars</a></li>
+                <li><a href="#">Blocks</a></li>
+                <li><a href="#">Red Bricks</a></li>
+                <li><a href="#">M Sand</a></li>
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h2>Products by Vendor: <span id="vendor-name"></span></h2>
+        <div id="vendor-product-list" class="product-list"></div>
+    </section>
+
+    <footer>
+        <div class="chat-support">
+            <button>Need Help? Speak to us here!</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the vendor name from the URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const vendorName = urlParams.get("vendorName");
+
+            if (vendorName) {
+                // Display the vendor name
+                document.getElementById("vendor-name").textContent = decodeURIComponent(vendorName);
+
+                // Fetch products by vendor name
+                fetch(`http://localhost:8080/api/products/by-vendor?vendorName=${vendorName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const vendorProductList = document.getElementById("vendor-product-list");
+                        if (data.length === 0) {
+                            vendorProductList.innerHTML = "<p>No products available for this vendor.</p>";
+                        } else {
+                            let productsHTML = "";
+                            data.forEach(product => {
+                                productsHTML += `
+                                    <div class="product">
+                                        <h3>${product.name}</h3>
+                                        <p>${product.description}</p>
+                                        <p><strong>Price: ${product.price} Rs</strong></p>
+                                    </div>
+                                `;
+                            });
+                            vendorProductList.innerHTML = productsHTML;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching vendor products:", error);
+                        document.getElementById("vendor-product-list").innerHTML = "<p>Failed to load vendor products.</p>";
+                    });
+            } else {
+                document.getElementById("vendor-product-list").innerHTML = "<p>Vendor name not provided.</p>";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distance Calculator</title>
+    <title>Distance Calculator with Autocomplete</title>
     <style>
-        .autocomplete-suggestions {
+        #suggestions1, #suggestions2 {
             border: 1px solid #ccc;
             max-height: 150px;
             overflow-y: auto;
             position: absolute;
             background: white;
-            width: 200px;
+            width: 300px;
+            margin-top: 5px;
         }
-        .autocomplete-suggestions div {
-            padding: 5px;
+        .suggestion-item {
+            padding: 8px;
             cursor: pointer;
         }
-        .autocomplete-suggestions div:hover {
-            background: #ddd;
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -27,75 +28,77 @@
     <h1>Booking Page</h1>
     
     <label for="city1">City 1:</label>
-    <input type="text" id="city1" onkeyup="showSuggestions(this, 'suggestions1')">
-    <div id="suggestions1" class="autocomplete-suggestions"></div>
+    <input type="text" id="city1" placeholder="Enter an address">
+    <div id="suggestions1"></div>
 
     <br><br>
-    <br><br>
-
+    
     <label for="city2">City 2:</label>
-    <input type="text" id="city2" onkeyup="showSuggestions(this, 'suggestions2')">
-    <div id="suggestions2" class="autocomplete-suggestions"></div>
+    <input type="text" id="city2" placeholder="Enter an address">
+    <div id="suggestions2"></div>
 
     <br><br>
-    <br><br>
-
+    
     <button onclick="calculateDistance()">Calculate Distance</button>
 
     <h2 id="result"></h2>
 
     <script>
-     
-        const cities = [
-            "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata",
-            "Pune", "Jaipur", "Lucknow", "Kanpur", "Nagpur", "Visakhapatnam", "Indore",
-            "Thane", "Bhopal", "Patna", "Vadodara", "Ghaziabad", "Ludhiana", "Agra",
-            "Nashik", "Faridabad", "Meerut", "Rajkot", "Varanasi", "Srinagar", "Aurangabad",
-            "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Howrah", "Gwalior",
-            "Jabalpur", "Coimbatore", "Vijayawada", "Jodhpur", "Madurai", "Raipur",
-            "Kota", "Guwahati", "Chandigarh", "Solapur", "Hubballi", "Mysore", "Salem",
-            "Tiruchirappalli", "Bareilly", "Aligarh", "Gorakhpur", "Jalandhar"
-        ];
-
-        function showSuggestions(inputElement, suggestionBoxId) {
-            let query = inputElement.value.toLowerCase();
-            let suggestionBox = document.getElementById(suggestionBoxId);
-            suggestionBox.innerHTML = ""; // Clear previous suggestions
-
-            if (!query) {
-                suggestionBox.style.display = "none";
-                return;
-            }
-
-            let filteredCities = cities.filter(city => city.toLowerCase().startsWith(query));
-
-            if (filteredCities.length > 0) {
-                suggestionBox.style.display = "block";
-                filteredCities.forEach(city => {
-                    let div = document.createElement("div");
-                    div.innerText = city;
-                    div.onclick = function() {
-                        inputElement.value = city;
-                        suggestionBox.innerHTML = "";
-                        suggestionBox.style.display = "none";
-                    };
-                    suggestionBox.appendChild(div);
-                });
-            } else {
-                suggestionBox.style.display = "none";
+        async function fetchSuggestions(query, suggestionsDiv) {
+            try {
+                const response = await fetch(`/autocomplete?query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                displaySuggestions(data, suggestionsDiv);
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
             }
         }
+
+        function displaySuggestions(results, suggestionsDiv) {
+            suggestionsDiv.innerHTML = '';
+            results.forEach(result => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.className = 'suggestion-item';
+                suggestionItem.textContent = result.formatted;
+                suggestionItem.onclick = () => {
+                    suggestionsDiv.previousElementSibling.value = result.formatted;
+                    suggestionsDiv.innerHTML = '';
+                };
+                suggestionsDiv.appendChild(suggestionItem);
+            });
+        }
+
+        document.getElementById('city1').addEventListener('input', function () {
+            const query = this.value.trim();
+            if (query.length > 2) {
+                fetchSuggestions(query, document.getElementById('suggestions1'));
+            } else {
+                document.getElementById('suggestions1').innerHTML = '';
+            }
+        });
+
+        document.getElementById('city2').addEventListener('input', function () {
+            const query = this.value.trim();
+            if (query.length > 2) {
+                fetchSuggestions(query, document.getElementById('suggestions2'));
+            } else {
+                document.getElementById('suggestions2').innerHTML = '';
+            }
+        });
 
         function calculateDistance() {
             let city1 = document.getElementById("city1").value;
             let city2 = document.getElementById("city2").value;
 
             if (city1 && city2) {
-                fetch(`/distance?city1=${city1}&city2=${city2}`)
+                fetch(`/distance?city1=${encodeURIComponent(city1)}&city2=${encodeURIComponent(city2)}`)
                     .then(response => response.text())
                     .then(data => document.getElementById("result").innerHTML = data);
             } else {
-                alert("Please enter valid city names.");
+                alert("Please enter valid addresses.");
             }
         }
     </script>

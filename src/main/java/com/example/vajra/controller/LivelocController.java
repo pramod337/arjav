@@ -52,4 +52,17 @@ public class LivelocController {
         return "Distance from your location: " + distance + " km <br>" +
         "<a href='" + Googlemapsurl + "' target='_blank'>Get Direction via Maps</a>";
   }
+    
+    @Autowired
+    private VajraService geocodeServices;
+    
+    @GetMapping("/autocomplete")
+    public String autocompleteAddress(@RequestParam String query) {
+    	try {
+    		return geocodeServices.getAutocompleteSuggestions(query);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return "{\"results\": []}";
+    	}
+    }
 }

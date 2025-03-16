@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .product h3 {
+            margin: 0;
+        }
+        .product p {
+            margin: 5px 0;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vendor Products</h1>
+
+    <!-- Form to Add a New Product -->
+    <div class="section">
+        <h2>Add a New Product</h2>
+        <form id="addProductForm">
+            <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input type="text" id="productName" placeholder="Enter product name" required>
+            </div>
+            <div class="form-group">
+                <label for="productPrice">Price:</label>
+                <input type="number" id="productPrice" placeholder="Enter price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="productDescription">Description:</label>
+                <textarea id="productDescription" placeholder="Enter product description" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Product</button>
+            </div>
+        </form>
+    </div>
+
+   <br></br>
+    <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
+        <label for="imageUpload">Upload Image:</label>
+        <input type="file" id="imageUpload" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Display Uploaded Images -->
+    <div class="image-container" id="imageContainer">
+        <!-- Images will be dynamically added here -->
+    </div>
+
+<script>
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const formData = new FormData(this); // Create FormData object
+    const imageContainer = document.getElementById('imageContainer');
+
+    console.log("File selected:", formData.get('image').name); // Log the file name
+
+    // Send the image to the server
+    fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("File uploaded successfully. Image URL:", data.imageUrl);
+            // Display the uploaded image
+            const imgElement = document.createElement('img');
+            imgElement.src = data.imageUrl;
+            imageContainer.appendChild(imgElement);
+        } else {
+            console.error("Failed to upload image.");
+            alert('Failed to upload image.');
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading image:', error);
+        alert('An error occurred while uploading the image.');
+    });
+});
+    </script>
+
+
+    <script>
+        // Add a new product
+        document.getElementById('addProductForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            const productName = document.getElementById('productName').value;
+            const productPrice = document.getElementById('productPrice').value;
+            const productDescription = document.getElementById('productDescription').value;
+
+            const newProduct = {
+                name: productName,
+                price: parseFloat(productPrice),
+                description: productDescription
+            };
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newProduct)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add product');
+                }
+
+                alert('Product added successfully!');
+                document.getElementById('addProductForm').reset(); // Clear the form
+                fetchAllVendorsProducts(); // Refresh the list of all products
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add product. Please try again.');
+            }
+        });
+
+        // Fetch products for a specific vendor
+        async function fetchSpecificVendorProducts() {
+            const vendorId = document.getElementById('specificVendorId').value;
+            if (!vendorId) {
+                alert('Please enter a Vendor ID');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:8080/api/products/vendor/${vendorId}`);
+            const products = await response.json();
+
+            const productList = document.getElementById('specificVendorProductList');
+            productList.innerHTML = ''; // Clear previous results
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>No products found for this vendor.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Price: $${product.price}</p>
+                    <p>Description: ${product.description}</p>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        // Fetch products for all vendors
+        async function fetchAllVendorsProducts() {
+            const response = await fetch(`http://localhost:8080/api/products`);
+            const products = await response.json();
+
+            const productList = document.getElementById('allVendorsProductList');
+            productList.innerHTML = ''; // Clear previous results
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>No products found.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Vendor ID: ${product.vendorId || 'N/A'}</p>
+                    <p>Price: $${product.price}</p>
+                    <p>Description: ${product.description}</p>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -7,13 +7,12 @@ import org.springframework.stereotype.Repository;
 import com.example.vajra.model.EmailOTP;
 import com.example.vajra.model.User;
 
-
-
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EmailRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
-
-    
+    List<User> findByIsVendor(boolean isVendor);
+    Optional<User> findByEmail(String email);
 }

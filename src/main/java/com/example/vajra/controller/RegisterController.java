@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller  // Use @RestController for API responses
+@Controller
 @RequestMapping("/")
 @CrossOrigin(origins = "http://localhost:3000")
 public class RegisterController {
@@ -21,16 +21,18 @@ public class RegisterController {
 
     @GetMapping("/register")
     public String showRegisterPage() {
-    	return "register";
+        return "register";
     }
-    
+
     @PostMapping("/register")
     @ResponseBody
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
-        userService.registerUser(user.getUsername(), user.getPassword(), user.getEmail());
+        // Pass the isVendor value (default to false if not provided)
+        Boolean isVendor = user.isVendor() != null ? user.isVendor() : false;
+        userService.registerUser(user.getUsername(), user.getPassword(), user.getEmail(), isVendor, false);
+
         Map<String, String> response = new HashMap<>();
-        response.put("message","User registered successfully!");
+        response.put("message", "User registered successfully!");
         return ResponseEntity.ok(response);
     }
-
 }

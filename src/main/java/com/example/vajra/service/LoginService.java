@@ -43,4 +43,33 @@ public class LoginService {
         System.out.println("Password validation result for user " + username + ": " + isPasswordValid); // Log the result
         return isPasswordValid;
     }
+
+    public boolean validateVendorPassword(String username, String rawPassword) {
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(rawPassword)) {
+            throw new IllegalArgumentException("Username and password must not be empty");
+        }
+
+        // Fetch the user from the database
+        Optional<User> user = userRepository.findByUsername(username);
+
+        // Check if the user is present
+        if (!user.isPresent()) {
+            System.out.println("User not found: " + username);
+            return false;
+        }
+
+        User foundUser = user.get();
+
+        // Ensure the user is a vendor
+        if (!foundUser.isVendor()) {
+            System.out.println("User is not a vendor: " + username);
+            return false;
+        }
+
+        // Compare the provided password with the stored hashed password
+        boolean isPasswordValid = passwordEncoder.matches(rawPassword, foundUser.getPassword());
+        System.out.println("Password validation result for vendor " + username + ": " + isPasswordValid);
+        return isPasswordValid;
+    }
+
 }
